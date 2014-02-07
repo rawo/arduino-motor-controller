@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map for RobotController 
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+RobotController KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+driveForward    KEYWORD2
+driveBackward   KEYWORD2
+stop	KEYWORD2
+turnLeft	KEYWORD2
+turnRight	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
