@@ -7,8 +7,8 @@
 class RobotController 
 {
     private:
-        AF_DCMotor* leftMotor;
-        AF_DCMotor* rightMotor;
+        AF_DCMotor leftMotor;
+        AF_DCMotor rightMotor;
 
 
         volatile uint8_t currentSpeed;
@@ -29,7 +29,8 @@ class RobotController
       
     public:
 
-        RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor);
+        //RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor);
+        RobotController(uint8_t leftMotorChannel, uint8_t rightMotorChannel);
 
         void turnLeft();
         void turnRight();
@@ -58,6 +59,5 @@ class RobotController
         bool isTurningLeft();
         bool isTurningRight();
         bool isStopped();
-
 };
 #endif

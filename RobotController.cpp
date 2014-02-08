@@ -3,8 +3,11 @@
 #include <stdint.h>
 #include "Arduino.h"
 
-RobotController::RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor)
-: motor_maxSpeed(100), 
+//RobotController::RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor)
+RobotController::RobotController(uint8_t leftMotorChannel, uint8_t rightMotorChannel)
+: leftMotor(leftMotorChannel),
+    rightMotor(rightMotorChannel),
+    motor_maxSpeed(100), 
     motor_zeroSpeed(0),
     acceleration(50), 
     acceleration_delay(250),
@@ -14,8 +17,6 @@ RobotController::RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor)
     TURNING_LEFT(3),
     TURNING_RIGHT(4)
 {
-    this->leftMotor = leftMotor;
-    this->rightMotor = rightMotor;
 
     this->currentSpeed = 0;
     this->movement = STOPPED;
@@ -25,26 +26,22 @@ void RobotController::turnLeft()
 {
     if (isTurningLeft())
     {
-        Serial.println("is turning left");
         return;
     }
 
     if(!isStopped())
     {
-        Serial.println("not stopped. Stopping!");
         stop();
     }
 
 
-    leftMotor->setSpeed(motor_maxSpeed);
-    rightMotor->setSpeed(motor_maxSpeed);
+    leftMotor.setSpeed(motor_maxSpeed);
+    rightMotor.setSpeed(motor_maxSpeed);
 
-    leftMotor->run(BACKWARD);
-    rightMotor->run(FORWARD);
+    leftMotor.run(BACKWARD);
+    rightMotor.run(FORWARD);
 
     movement = TURNING_LEFT;
-
-    Serial.println("Turning left");
 }
 
 bool RobotController::isStopped()
@@ -69,11 +66,11 @@ void RobotController::turnRight()
         stop();
     }
 
-    leftMotor->setSpeed(motor_maxSpeed);
-    rightMotor->setSpeed(motor_maxSpeed);
+    leftMotor.setSpeed(motor_maxSpeed);
+    rightMotor.setSpeed(motor_maxSpeed);
 
-    leftMotor->run(FORWARD);
-    rightMotor->run(BACKWARD);
+    leftMotor.run(FORWARD);
+    rightMotor.run(BACKWARD);
 
     movement = TURNING_RIGHT;
 
@@ -96,8 +93,8 @@ void RobotController::driveForward()
 }
 void RobotController::setMotorsToCurrentSpeed()
 {
-    rightMotor->setSpeed(currentSpeed);
-    leftMotor->setSpeed(currentSpeed);
+    rightMotor.setSpeed(currentSpeed);
+    leftMotor.setSpeed(currentSpeed);
 }
 
 bool RobotController::isDrivingBackward()
@@ -111,8 +108,8 @@ void RobotController::bothMotorsRunBackward()
     if (movement != DRIVING_BACKWARD) 
     {
         movement = DRIVING_BACKWARD;
-        rightMotor->run(BACKWARD);
-        leftMotor->run(BACKWARD);
+        rightMotor.run(BACKWARD);
+        leftMotor.run(BACKWARD);
     }
 }
 
@@ -120,8 +117,8 @@ void RobotController::bothMotorsRunForward()
 {
     if ( movement != DRIVING_FORWARD) {
         movement = DRIVING_FORWARD;
-        leftMotor->run(FORWARD);
-        rightMotor->run(FORWARD);
+        leftMotor.run(FORWARD);
+        rightMotor.run(FORWARD);
     }
 }
 
@@ -130,8 +127,8 @@ void RobotController::bothMotorsRelease()
     if (movement != STOPPED)
     {
         movement = STOPPED;
-        rightMotor->run(RELEASE);
-        leftMotor->run(RELEASE);
+        rightMotor.run(RELEASE);
+        leftMotor.run(RELEASE);
     }
 }
 
@@ -186,8 +183,8 @@ void RobotController::stop()
 {
 
     deaccelerate();
-    leftMotor->setSpeed(motor_zeroSpeed);
-    rightMotor->setSpeed(motor_zeroSpeed);
+    leftMotor.setSpeed(motor_zeroSpeed);
+    rightMotor.setSpeed(motor_zeroSpeed);
     bothMotorsRelease();
     currentSpeed = 0;
     delay(500);
@@ -211,27 +208,27 @@ uint8_t RobotController::getCurrentSpeed()
 void RobotController::test() 
 {
     delay(1000);
-    leftMotor->setSpeed(100);
-    rightMotor->setSpeed(100);
-    leftMotor->run(FORWARD);
-    rightMotor->run(BACKWARD);
+    leftMotor.setSpeed(100);
+    rightMotor.setSpeed(100);
+    leftMotor.run(FORWARD);
+    rightMotor.run(BACKWARD);
     
     delay(5000);
 
-    leftMotor->run(RELEASE);
-    rightMotor->run(RELEASE);
+    leftMotor.run(RELEASE);
+    rightMotor.run(RELEASE);
 
     delay(2000);
 
-    leftMotor->setSpeed(100);
-    rightMotor->setSpeed(100);
-    leftMotor->run(BACKWARD);
-    rightMotor->run(FORWARD);
+    leftMotor.setSpeed(100);
+    rightMotor.setSpeed(100);
+    leftMotor.run(BACKWARD);
+    rightMotor.run(FORWARD);
 
     delay(5000);
 
-    leftMotor->setSpeed(0);
-    rightMotor->setSpeed(0);
-    leftMotor->run(RELEASE);
-    rightMotor->run(RELEASE);
+    leftMotor.setSpeed(0);
+    rightMotor.setSpeed(0);
+    leftMotor.run(RELEASE);
+    rightMotor.run(RELEASE);
 }
