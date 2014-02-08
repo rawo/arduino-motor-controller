@@ -10,7 +10,6 @@ class RobotController
         AF_DCMotor leftMotor;
         AF_DCMotor rightMotor;
 
-
         volatile uint8_t currentSpeed;
         volatile uint8_t movement;
 
@@ -29,7 +28,6 @@ class RobotController
       
     public:
 
-        //RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor);
         RobotController(uint8_t leftMotorChannel, uint8_t rightMotorChannel);
 
         void turnLeft();
@@ -48,11 +46,10 @@ class RobotController
 
         void deaccelerate();
         
-        void bothMotorsRunForward();
-        void bothMotorsRelease();
-        void bothMotorsRunBackward();
-
-        void setMotorsToCurrentSpeed();
+        void setMotorsRun_RELEASE();
+        void setMotorsRun_FORWARD();
+        void setMotorsRun_BACKWARD();
+        void setMotorsSpeed_currentSpeed();
 
         bool isDrivingBackward();
         bool isDrivingForward();

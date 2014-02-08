@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include "Arduino.h"
 
-//RobotController::RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor)
 RobotController::RobotController(uint8_t leftMotorChannel, uint8_t rightMotorChannel)
 : leftMotor(leftMotorChannel),
     rightMotor(rightMotorChannel),
@@ -88,10 +87,10 @@ void RobotController::driveForward()
         stop();
     }
     speedUp();
-    setMotorsToCurrentSpeed();
-    bothMotorsRunForward();
+    setMotorsSpeed_currentSpeed();
+    setMotorsRun_FORWARD();
 }
-void RobotController::setMotorsToCurrentSpeed()
+void RobotController::setMotorsSpeed_currentSpeed()
 {
     rightMotor.setSpeed(currentSpeed);
     leftMotor.setSpeed(currentSpeed);
@@ -103,7 +102,7 @@ bool RobotController::isDrivingBackward()
 
 }
 
-void RobotController::bothMotorsRunBackward()
+void RobotController::setMotorsRun_BACKWARD()
 {
     if (movement != DRIVING_BACKWARD) 
     {
@@ -113,7 +112,7 @@ void RobotController::bothMotorsRunBackward()
     }
 }
 
-void RobotController::bothMotorsRunForward()
+void RobotController::setMotorsRun_FORWARD()
 {
     if ( movement != DRIVING_FORWARD) {
         movement = DRIVING_FORWARD;
@@ -122,7 +121,7 @@ void RobotController::bothMotorsRunForward()
     }
 }
 
-void RobotController::bothMotorsRelease()
+void RobotController::setMotorsRun_RELEASE()
 {
     if (movement != STOPPED)
     {
@@ -170,8 +169,8 @@ void RobotController::driveBackward()
         this->stop();
     }
     speedUp();
-    setMotorsToCurrentSpeed();
-    bothMotorsRunBackward();
+    setMotorsSpeed_currentSpeed();
+    setMotorsRun_BACKWARD();
 }
 
 bool RobotController::isDrivingForward() 
@@ -185,7 +184,7 @@ void RobotController::stop()
     deaccelerate();
     leftMotor.setSpeed(motor_zeroSpeed);
     rightMotor.setSpeed(motor_zeroSpeed);
-    bothMotorsRelease();
+    setMotorsRun_RELEASE();
     currentSpeed = 0;
     delay(500);
 }
@@ -195,7 +194,7 @@ void RobotController::deaccelerate()
     while(speedDown())
     {
         delay(acceleration_delay);
-        setMotorsToCurrentSpeed();
+        setMotorsSpeed_currentSpeed();
     }
 
 }
