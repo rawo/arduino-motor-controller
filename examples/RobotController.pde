@@ -1,7 +1,6 @@
 #include <AFMotor.h>
 #include <SoftwareSerial.h>
 #include <RobotController.h>
-#include <MyTest.h>
 
 
 const int CMD_FORWARD = 70; //F
@@ -14,12 +13,9 @@ const int CMD_TEST_RIGHT = 49; //1
 const int RX =15;
 const int TX =14;
 int inc = 0;
-
 SoftwareSerial serialToBluetooth(RX, TX); // RX, TX
 
-AF_DCMotor leftMotor(1);
-AF_DCMotor rightMotor(2);
-RobotController robot(&leftMotor,&rightMotor);
+RobotController robot(1,2);  
 
 int receiveCommandFromSerial(SoftwareSerial& serial) {
   int c=0;
@@ -46,6 +42,8 @@ void handleCommand(int intCmd) {
   
   if (intCmd == CMD_FORWARD) {
     robot.driveForward();
+    Serial.print("current speed:");
+    Serial.println(robot.getCurrentSpeed());
   }
   
   if (intCmd == CMD_BACKWARD) {
@@ -63,36 +61,6 @@ void handleCommand(int intCmd) {
   if (intCmd == CMD_STOP) {
     robot.stop();
   }  
-  
-  if (intCmd == CMD_TEST_LEFT) {
-    leftMotor.run(FORWARD);
-    leftMotor.setSpeed(255);
-    delay(3000);
-    leftMotor.setSpeed(0);
-    leftMotor.run(RELEASE);
-    delay(1000);
-    leftMotor.setSpeed(255);
-    leftMotor.run(BACKWARD);
-    delay(3000);
-    leftMotor.setSpeed(0);
-    leftMotor.run(RELEASE);
-  }
-  
-  if (intCmd == CMD_TEST_RIGHT) {
-    rightMotor.run(FORWARD);
-    rightMotor.setSpeed(255);
-    delay(3000);
-    rightMotor.setSpeed(0);
-    rightMotor.run(RELEASE);
-    delay(1000);
-    rightMotor.setSpeed(255);
-    rightMotor.run(BACKWARD);
-    delay(3000);
-    rightMotor.setSpeed(0);
-    rightMotor.run(RELEASE);
-    
-  }
-
 }
 
 void setup() {
@@ -102,6 +70,7 @@ void setup() {
   Serial.begin(9600);
   serialToBluetooth.begin(9600);
   
+//  robot.test();
 }
 
 void loop() {
