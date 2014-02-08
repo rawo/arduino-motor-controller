@@ -11,8 +11,9 @@ class RobotController
         AF_DCMotor* rightMotor;
 
 
-        uint8_t currentSpeed;
-        uint8_t movement;
+        volatile uint8_t currentSpeed;
+        volatile uint8_t movement;
+        volatile uint8_t turning;
 
         const uint8_t motor_maxSpeed;
         const uint8_t motor_zeroSpeed;
@@ -23,29 +24,41 @@ class RobotController
         const uint8_t DRIVING_FORWARD;
         const uint8_t STOPPED;
 
+        const uint8_t TURNING_LEFT;
+        const uint8_t TURNING_RIGHT;
+
       
     public:
+
         RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor);
-        RobotController();
+
         void turnLeft();
         void turnRight();
         void driveForward();
         void driveBackward();
         void stop();
+
         uint8_t getCurrentSpeed();
+
+        void test();
 
     private:
         uint8_t speedUp();
         uint8_t speedDown();
-        void accelerate();
+
         void deaccelerate();
+        
         void bothMotorsRunForward();
         void bothMotorsRelease();
         void bothMotorsRunBackward();
+
         void setMotorsToCurrentSpeed();
 
-        bool drivingBackward();
-        bool drivingForward();
+        bool isDrivingBackward();
+        bool isDrivingForward();
+        bool isTurningLeft();
+        bool isTurningRight();
+        bool isStopped();
 
 };
 #endif

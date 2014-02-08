@@ -4,15 +4,16 @@
 #include "Arduino.h"
 
 RobotController::RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor)
-: motor_maxSpeed(255), 
+: motor_maxSpeed(100), 
     motor_zeroSpeed(0),
     acceleration(50), 
-    acceleration_delay(50),
+    acceleration_delay(250),
+    STOPPED(0),
     DRIVING_BACKWARD(1),
     DRIVING_FORWARD(2),
-    STOPPED(0)
+    TURNING_LEFT(3),
+    TURNING_RIGHT(4)
 {
-    Serial.println("RobotController constructor()");
     this->leftMotor = leftMotor;
     this->rightMotor = rightMotor;
 
@@ -22,66 +23,110 @@ RobotController::RobotController(AF_DCMotor* leftMotor, AF_DCMotor* rightMotor)
 
 void RobotController::turnLeft()
 {
-    leftMotor->setSpeed(100);
-    rightMotor->setSpeed(currentSpeed);
+    if (isTurningLeft())
+    {
+        return;
+    }
+
+    if(!isStopped())
+    {
+        stop();
+    }
+
+    leftMotor->setSpeed(motor_maxSpeed);
+    rightMotor->setSpeed(motor_maxSpeed);
+
+    leftMotor->run(BACKWARD);
+    rightMotor->run(FORWARD);
+
+    turning = TURNING_LEFT;
+}
+
+bool RobotController::isStopped()
+{
+    return movement == STOPPED;
+}
+
+bool RobotController::isTurningLeft()
+{
+    return turning == TURNING_LEFT;
 }
 
 void RobotController::turnRight()
 {
-    leftMotor->setSpeed(currentSpeed);
-    rightMotor->setSpeed(100);
+    if (isTurningRight())
+    {
+        return;
+    }
+
+    if(!isStopped())
+    {
+        stop();
+    }
+
+    leftMotor->setSpeed(motor_maxSpeed);
+    rightMotor->setSpeed(motor_maxSpeed);
+
+    leftMotor->run(FORWARD);
+    rightMotor->run(BACKWARD);
+
+    turning = TURNING_RIGHT;
+}
+
+bool RobotController::isTurningRight()
+{
+    return turning == TURNING_RIGHT;
 }
 
 void RobotController::driveForward()
 {
-    if (drivingBackward()) // <--- Something is wrong with this statement
+    if (isDrivingBackward()) 
     {
         stop();
     }
-    bothMotorsRunForward();
     speedUp();
     setMotorsToCurrentSpeed();
-    //accelerate();
+    bothMotorsRunForward();
 }
 void RobotController::setMotorsToCurrentSpeed()
 {
-    leftMotor->setSpeed(currentSpeed);
     rightMotor->setSpeed(currentSpeed);
+    leftMotor->setSpeed(currentSpeed);
 }
 
-bool RobotController::drivingBackward()
+bool RobotController::isDrivingBackward()
 {
     return movement == DRIVING_BACKWARD;
 
 }
 
-void RobotController::accelerate()
-{
-    while(speedUp()){
-        delay(acceleration_delay);
-        setMotorsToCurrentSpeed();
-    }
-}
-
 void RobotController::bothMotorsRunBackward()
 {
-    movement = DRIVING_BACKWARD;
-    leftMotor->run(BACKWARD);
-    rightMotor->run(BACKWARD);
+    if (movement != DRIVING_BACKWARD) 
+    {
+        movement = DRIVING_BACKWARD;
+        rightMotor->run(BACKWARD);
+        leftMotor->run(BACKWARD);
+    }
 }
 
 void RobotController::bothMotorsRunForward()
 {
-    movement = DRIVING_FORWARD;
-    leftMotor->run(FORWARD);
-    rightMotor->run(FORWARD);
+    if ( movement != DRIVING_FORWARD) {
+        movement = DRIVING_FORWARD;
+        leftMotor->run(FORWARD);
+        rightMotor->run(FORWARD);
+    }
 }
 
 void RobotController::bothMotorsRelease()
 {
-    movement = STOPPED;
-    leftMotor->run(RELEASE);
-    rightMotor->run(RELEASE);
+    if (movement != STOPPED)
+    {
+        movement = STOPPED;
+        rightMotor->run(RELEASE);
+        leftMotor->run(RELEASE);
+    }
 }
 
 
@@ -96,7 +141,6 @@ uint8_t RobotController::speedUp()
         currentSpeed = temporarySpeed;
         return 1;
     }
-
     return 0;
 }
 
@@ -118,15 +162,16 @@ uint8_t RobotController::speedDown()
 
 void RobotController::driveBackward()
 {
-    if (drivingForward()) 
+    if (isDrivingForward()) 
     {
         this->stop();
     }
+    speedUp();
+    setMotorsToCurrentSpeed();
     bothMotorsRunBackward();
-    accelerate();
 }
 
-bool RobotController::drivingForward() 
+bool RobotController::isDrivingForward() 
 {
     return movement == DRIVING_FORWARD;
 }
@@ -135,8 +180,11 @@ void RobotController::stop()
 {
 
     deaccelerate();
+    leftMotor->setSpeed(motor_zeroSpeed);
+    rightMotor->setSpeed(motor_zeroSpeed);
     bothMotorsRelease();
     currentSpeed = 0;
+    delay(500);
 }
 
 void RobotController::deaccelerate() 
@@ -148,7 +196,36 @@ void RobotController::deaccelerate()
     }
 
 }
+
 uint8_t RobotController::getCurrentSpeed() 
 {
     return currentSpeed;
+}
+
+void RobotController::test() 
+{
+    delay(1000);
+    leftMotor->setSpeed(100);
+    rightMotor->setSpeed(100);
+    leftMotor->run(FORWARD);
+    rightMotor->run(BACKWARD);
+    
+    delay(5000);
+
+    leftMotor->run(RELEASE);
+    rightMotor->run(RELEASE);
+
+    delay(2000);
+
+    leftMotor->setSpeed(100);
+    rightMotor->setSpeed(100);
+    leftMotor->run(BACKWARD);
+    rightMotor->run(FORWARD);
+
+    delay(5000);
+
+    leftMotor->setSpeed(0);
+    rightMotor->setSpeed(0);
+    leftMotor->run(RELEASE);
+    rightMotor->run(RELEASE);
 }
