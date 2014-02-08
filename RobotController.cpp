@@ -25,13 +25,16 @@ void RobotController::turnLeft()
 {
     if (isTurningLeft())
     {
+        Serial.println("is turning left");
         return;
     }
 
     if(!isStopped())
     {
+        Serial.println("not stopped. Stopping!");
         stop();
     }
+
 
     leftMotor->setSpeed(motor_maxSpeed);
     rightMotor->setSpeed(motor_maxSpeed);
@@ -39,7 +42,9 @@ void RobotController::turnLeft()
     leftMotor->run(BACKWARD);
     rightMotor->run(FORWARD);
 
-    turning = TURNING_LEFT;
+    movement = TURNING_LEFT;
+
+    Serial.println("Turning left");
 }
 
 bool RobotController::isStopped()
@@ -49,7 +54,7 @@ bool RobotController::isStopped()
 
 bool RobotController::isTurningLeft()
 {
-    return turning == TURNING_LEFT;
+    return movement == TURNING_LEFT;
 }
 
 void RobotController::turnRight()
@@ -70,12 +75,13 @@ void RobotController::turnRight()
     leftMotor->run(FORWARD);
     rightMotor->run(BACKWARD);
 
-    turning = TURNING_RIGHT;
+    movement = TURNING_RIGHT;
+
 }
 
 bool RobotController::isTurningRight()
 {
-    return turning == TURNING_RIGHT;
+    return movement == TURNING_RIGHT;
 }
 
 void RobotController::driveForward()

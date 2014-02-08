@@ -13,7 +13,6 @@ class RobotController
 
         volatile uint8_t currentSpeed;
         volatile uint8_t movement;
-        volatile uint8_t turning;
 
         const uint8_t motor_maxSpeed;
         const uint8_t motor_zeroSpeed;
