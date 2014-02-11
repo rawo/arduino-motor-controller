@@ -6,7 +6,7 @@
 RobotController::RobotController(uint8_t leftMotorChannel, uint8_t rightMotorChannel)
 : leftMotor(leftMotorChannel),
     rightMotor(rightMotorChannel),
-    motor_maxSpeed(100), 
+    motor_maxSpeed(200), 
     motor_zeroSpeed(0),
     acceleration(50), 
     acceleration_delay(250),
@@ -134,6 +134,7 @@ void RobotController::setMotorsRun_RELEASE()
 
 uint8_t RobotController::speedUp()
 {
+    /*
     if (currentSpeed == motor_maxSpeed) return 0;
 
     int temporarySpeed = currentSpeed;
@@ -143,6 +144,9 @@ uint8_t RobotController::speedUp()
         currentSpeed = temporarySpeed;
         return 1;
     }
+    return 0;
+    */
+    currentSpeed = motor_maxSpeed;
     return 0;
 }
 
